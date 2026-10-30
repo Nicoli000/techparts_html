@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Início | Tech Parts</title>
+    <link rel="stylesheet" href="/css/inicial.css">
+</head>
+
+<body>
+
+    <aside class="sidebar">
+        <div class="logo">
+            <h2>TECH<span>PARTS</span></h2>
+            <p>Hardware Store</p>
+        </div>
+
+        <nav>
+            <a href="index.html" class="ativo">Início</a>
+            <a href="html/clientes.html">Clientes</a>
+            <a href="html/produtos.html">Produtos</a>
+            <a href="html/fornecedores.html">Fornecedores</a>
+            <a href="html/estoque.html">Estoque</a>
+            <a href="html/carrinho.html">Carrinho</a>
+            <a href="html/pedidos.html">Pedidos</a>
+            <a href="html/pagamentos.html">Pagamentos</a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <p>Sistema de gerenciamento</p>
+            <span>Tech Parts © 2026</span>
+        </div>
+    </aside>
+
+    <main class="conteudo">
+
+        <header class="topo">
+            <div>
+                <h1>Dashboard</h1>
+                <p>Bem-vindo ao sistema Tech Parts!</p>
+            </div>
+
+            <div class="data">
+                <span id="dataAtual"></span>
+            </div>
+        </header>
+
+        <section class="boas-vindas">
+            <div>
+                <h2>Gerencie sua loja de hardware</h2>
+                <p>Acompanhe seus clientes, produtos, estoque e vendas em um só lugar.</p>
+            </div>
+        </section>
+
+        <section class="resumo">
+            <div class="card">
+                <div class="icone">CL</div>
+                <div>
+                    <p>Total de clientes</p>
+                    <h2 id="totalClientes">--</h2>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="icone">PR</div>
+                <div>
+                    <p>Produtos cadastrados</p>
+                    <h2 id="totalProdutos">--</h2>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="icone">FO</div>
+                <div>
+                    <p>Fornecedores</p>
+                    <h2 id="totalFornecedores">--</h2>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="icone">PD</div>
+                <div>
+                    <p>Total de pedidos</p>
+                    <h2 id="totalPedidos">--</h2>
+                </div>
+            </div>
+        </section>
+
+        <section class="painel">
+            <div class="painel-card">
+                <div class="titulo-painel">
+                    <h2>Estoque</h2>
+                    <a href="html/estoque.html">Ver estoque</a>
+                </div>
+
+                <p class="descricao">Acompanhamento da disponibilidade de produtos.</p>
+
+                <div class="estoque-info">
+                    <div>
+                        <span>Produtos disponíveis</span>
+                        <strong id="produtosDisponiveis">--</strong>
+                    </div>
+
+                    <div>
+                        <span>Estoque baixo</span>
+                        <strong id="estoqueBaixo">--</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="painel-card">
+                <div class="titulo-painel">
+                    <h2>Acessos rápidos</h2>
+                </div>
+
+                <p class="descricao">Acesse rapidamente as funcionalidades do sistema.</p>
+
+                <div class="atalhos">
+                    <a href="html/clientes.html">Cadastrar cliente</a>
+                    <a href="html/produtos.html">Cadastrar produto</a>
+                    <a href="html/fornecedores.html">Cadastrar fornecedor</a>
+                    <a href="html/pedidos.html">Consultar pedidos</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="pedidos">
+            <div class="titulo-painel">
+                <h2>Pedidos recentes</h2>
+                <a href="html/pedidos.html">Ver todos</a>
+            </div>
+
+            <div class="tabela-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Número</th>
+                            <th>Cliente</th>
+                            <th>Data</th>
+                            <th>Valor</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="listaPedidos">
+                        <tr>
+                            <td colspan="5">Os pedidos serão exibidos aqui após a integração com o banco de dados.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <script src="/js/inicial.js"></script>
+
+</body>
+</html>
