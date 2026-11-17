@@ -1,3 +1,4 @@
+
 const formCliente = document.getElementById("formCliente");
 const enderecos = document.getElementById("enderecos");
 const btnAdicionarEndereco = document.getElementById("btnAdicionarEndereco");
@@ -6,6 +7,8 @@ const tabelaClientes = document.getElementById("tabelaClientes");
 
 let quantidadeEnderecos = 1;
 
+
+// ADICIONAR ENDEREÇO
 btnAdicionarEndereco.addEventListener("click", function () {
     quantidadeEnderecos++;
 
@@ -70,6 +73,8 @@ btnAdicionarEndereco.addEventListener("click", function () {
     atualizarBotoesRemover();
 });
 
+
+// REMOVER ENDEREÇO
 function atualizarBotoesRemover() {
     const botoes = document.querySelectorAll(".btn-remover");
 
@@ -81,6 +86,8 @@ function atualizarBotoesRemover() {
     });
 }
 
+
+// ATUALIZAR NUMERAÇÃO DOS ENDEREÇOS
 function atualizarNumeracao() {
     const lista = document.querySelectorAll(".endereco");
 
@@ -91,6 +98,8 @@ function atualizarNumeracao() {
     quantidadeEnderecos = lista.length;
 }
 
+
+// CADASTRAR CLIENTE E SEUS ENDEREÇOS
 formCliente.addEventListener("submit", async function (event) {
     event.preventDefault();
 
@@ -110,13 +119,11 @@ formCliente.addEventListener("submit", async function (event) {
 
     listaEnderecos.forEach(function (endereco) {
         dadosEnderecos.push({
-            cep: endereco.querySelector('[name="cep[]"]').value.trim(),
-            rua: endereco.querySelector('[name="rua[]"]').value.trim(),
+            logradouro: endereco.querySelector('[name="rua[]"]').value.trim(),
             numero: endereco.querySelector('[name="numero[]"]').value.trim(),
-            bairro: endereco.querySelector('[name="bairro[]"]').value.trim(),
             cidade: endereco.querySelector('[name="cidade[]"]').value.trim(),
-            uf: endereco.querySelector('[name="uf[]"]').value,
-            complemento: endereco.querySelector('[name="complemento[]"]').value.trim()
+            estado: endereco.querySelector('[name="uf[]"]').value,
+            cep: endereco.querySelector('[name="cep[]"]').value.trim()
         });
     });
 
@@ -124,33 +131,26 @@ formCliente.addEventListener("submit", async function (event) {
         nome: nome,
         cpf: cpf,
         email: email,
-        telefone: telefone,
-        enderecos: dadosEnderecos
+        telefone: telefone
     };
 
     try {
         mensagem.textContent = "Cadastrando cliente...";
         mensagem.className = "";
 
-        const resposta = await fetch("http://localhost:3000/clientes", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(dadosCliente)
-        });
+        // Cadastra o cliente primeiro
+        const id_cliente = await cadastraCliente(dadosCliente);
 
-        const resultado = await resposta.json();
-
-        if (!resposta.ok) {
-            throw new Error(
-                resultado.erro ||
-                resultado.mensagem ||
-                "Não foi possível cadastrar o cliente."
-            );
+        if (!id_cliente) {
+            throw new Error("Não foi possível cadastrar o cliente.");
         }
 
-        mensagem.textContent = resultado.mensagem || "Cliente cadastrado com sucesso!";
+        // Cadastra cada endereço utilizando o ID do cliente
+        for (const endereco of dadosEnderecos) {
+            await adicionaEndereco(id_cliente, endereco);
+        }
+
+        mensagem.textContent = "Cliente e endereços cadastrados com sucesso!";
         mensagem.className = "mensagem-sucesso";
 
         formCliente.reset();
@@ -163,6 +163,8 @@ formCliente.addEventListener("submit", async function (event) {
     }
 });
 
+
+// LISTAR CLIENTES
 async function carregarClientes() {
     try {
         const resposta = await fetch("http://localhost:3000/clientes");
@@ -241,10 +243,12 @@ async function carregarClientes() {
     }
 }
 
+
+// CONSULTAR ENDEREÇOS DO CLIENTE
 async function consultarEnderecos(idCliente, nomeCliente) {
     try {
         const resposta = await fetch(
-            `http://localhost:3000/clientes/${idCliente}/endereco`
+            `http://localhost:3000/enderecos/${idCliente}`
         );
 
         if (!resposta.ok) {
@@ -263,10 +267,8 @@ async function consultarEnderecos(idCliente, nomeCliente) {
         lista.forEach(function (endereco, indice) {
             texto += "Endereço " + (indice + 1) + "\n";
             texto += "CEP: " + (endereco.cep || "") + "\n";
-            texto += "Rua: " + (endereco.rua || "") + ", " + (endereco.numero || "") + "\n";
-            texto += "Bairro: " + (endereco.bairro || "") + "\n";
-            texto += "Cidade: " + (endereco.cidade || "") + " - " + (endereco.uf || "") + "\n";
-            texto += "Complemento: " + (endereco.complemento || "Não informado") + "\n\n";
+            texto += "Rua: " + (endereco.logradouro || "") + ", " + (endereco.numero || "") + "\n";
+            texto += "Cidade: " + (endereco.cidade || "") + " - " + (endereco.estado || "") + "\n\n";
         });
 
         alert(texto);
@@ -277,6 +279,8 @@ async function consultarEnderecos(idCliente, nomeCliente) {
     }
 }
 
+
+// LIMPAR FORMULÁRIO
 formCliente.addEventListener("reset", function () {
     setTimeout(function () {
         mensagem.textContent = "";
@@ -295,6 +299,53 @@ formCliente.addEventListener("reset", function () {
     }, 0);
 });
 
+
+// CADASTRAR CLIENTE PELA API
+async function cadastraCliente(cliente) {
+    try {
+        const response = await axios.post(
+            'http://127.0.0.1:3000/clientes',
+            cliente
+        );
+
+        console.log("Cliente cadastrado:", response.data);
+
+        return response.data.id;
+
+    } catch (error) {
+        console.error("Erro ao cadastrar cliente:", error.response?.data || error);
+        throw error;
+    }
+}
+
+
+// ADICIONAR ENDEREÇO PELA API
+async function adicionaEndereco(id_cliente, endereco) {
+    try {
+        const response = await axios.post(
+            'http://127.0.0.1:3000/enderecos',
+            {
+                logradouro: endereco.logradouro,
+                numero: endereco.numero,
+                cidade: endereco.cidade,
+                estado: endereco.estado,
+                cep: endereco.cep,
+                id_cliente: id_cliente
+            }
+        );
+
+        console.log("Endereço cadastrado:", response.data);
+
+        return response.data;
+
+    } catch (error) {
+        console.error("Erro ao adicionar endereço:", error.response?.data || error);
+        throw error;
+    }
+}
+
+
+// INICIALIZAÇÃO
 atualizarBotoesRemover();
 carregarClientes();
 
